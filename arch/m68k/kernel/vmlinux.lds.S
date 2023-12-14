@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
+#if defined(CONFIG_ATARI) || (defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE))
 PHDRS
 {
   text PT_LOAD FILEHDR PHDRS FLAGS (7);
@@ -11,5 +11,5 @@ PHDRS
 #include "vmlinux-std.lds"
 #endif
 #else
-#include "vmlinux-nommu.lds"
+#include "vmlinux-uclinux.lds"
 #endif

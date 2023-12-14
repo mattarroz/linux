@@ -14,12 +14,12 @@ config AMIGA
 
 config ATARI
 	bool "Atari support"
-	depends on MMU
+	select MMU_MOTOROLA if MMU
 	select HAVE_ARCH_NVRAM_OPS
 	select LEGACY_TIMER_TICK
 	help
 	  This option enables support for the 68000-based Atari series of
-	  computers (including the TT, Falcon and Medusa). If you plan to use
+	  computers (including the ST, TT, Falcon and Medusa). If you plan to use
 	  this kernel on an Atari, say Y here and browse the material
 	  available in <file:Documentation/arch/m68k>; otherwise say N.
 
@@ -145,9 +145,13 @@ config VIRT
 config PILOT
 	bool
 
+config UCLINUX
+    bool
+
 config PILOT3
 	bool "Pilot 1000/5000, PalmPilot Personal/Pro, or PalmIII support"
 	depends on !MMU
+    select UCLINUX
 	select M68328
 	select PILOT
 	help
@@ -162,13 +166,16 @@ config XCOPILOT_BUGS
 config UCSIMM
 	bool "uCsimm module support"
 	depends on !MMU
+	select UCLINUX
 	select M68EZ328
+	# FIXME(mreis): UCSIMM -> M68KCLASSIC -> contradiction to UCLINUX... UCLINUX/Classic should be mutually exclusive
 	help
 	  Support for the Arcturus Networks uCsimm module.
 
 config UCDIMM
 	bool "uCdimm module support"
 	depends on !MMU
+	select UCLINUX
 	select M68VZ328
 	help
 	  Support for the Arcturus Networks uCdimm module.
@@ -176,6 +183,7 @@ config UCDIMM
 config DRAGEN2
 	bool "DragonEngine II board support"
 	depends on !MMU
+	select UCLINUX
 	select M68VZ328
 	help
 	  Support for the DragonEngine II board.
