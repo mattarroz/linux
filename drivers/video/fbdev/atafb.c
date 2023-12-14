@@ -3075,6 +3075,7 @@ static int __init atafb_probe(struct platform_device *pdev)
 		phys_screen_base = atari_stram_to_phys(screen_base + ovsc_offset);
 		screen_len = (mem_req - pad - ovsc_offset) & PAGE_MASK;
 		st_ovsc_switch();
+#ifndef CONFIG_M68000
 		if (CPU_IS_040_OR_060) {
 			/* On a '040+, the cache mode of video RAM must be set to
 			 * write-through also for internal video hardware! */
@@ -3082,6 +3083,7 @@ static int __init atafb_probe(struct platform_device *pdev)
 			kernel_set_cachemode(screen_base, screen_len,
 					     IOMAP_WRITETHROUGH);
 		}
+#endif
 		dev_info(&pdev->dev, "phys_screen_base %lx screen_len %d\n",
 			 phys_screen_base, screen_len);
 #ifdef ATAFB_EXT
@@ -3125,6 +3127,13 @@ static int __init atafb_probe(struct platform_device *pdev)
 				 &fb_info.modelist);
 
 	atafb_set_disp(&fb_info);
+
+/* FIXME_Matthias: this is a workaround, should be fixed in a better way
+ * screen_base is not correctly set in atafb_set_disp
+ */
+//#ifndef CONFIG_MMU
+	fb_info.screen_base = (void*) phys_screen_base;
+//#endif
 
 	fb_alloc_cmap(&(fb_info.cmap), 1 << fb_info.var.bits_per_pixel, 0);
 

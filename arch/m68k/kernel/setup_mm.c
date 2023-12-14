@@ -50,9 +50,17 @@
 #include <asm/natfeat.h>
 #include <asm/config.h>
 
-#if !FPSTATESIZE || !NR_IRQS
+#if (defined(CONFIG_FPU) && !FPSTATESIZE) || !NR_IRQS
 #warning No CPU/platform type selected, your kernel will not work!
 #warning Are you building an allnoconfig kernel?
+#endif
+
+#ifndef CONFIG_MMU
+unsigned long memory_start;
+unsigned long memory_end;
+
+EXPORT_SYMBOL(memory_start);
+EXPORT_SYMBOL(memory_end);
 #endif
 
 unsigned long m68k_machtype;
@@ -239,7 +247,14 @@ void __init setup_arch(char **cmdline_p)
 			     : : "d" (pcr | 0x20));
 		}
 	}
-
+#ifndef CONFIG_MMU
+	memory_start = PAGE_ALIGN(_ramstart);
+//	m68k_memory[0].addr = memory_start;
+/* FIXME_Matthias: not sure if -4 is necessary */
+//	m68k_memory[0].size -= PAGE_SIZE;
+	memory_end = m68k_memory[0].size;
+	availmem = memory_end-memory_start;
+#endif
 	setup_initial_init_mm((void *)PAGE_OFFSET, _etext, _edata, _end);
 
 #if defined(CONFIG_BOOTPARAM)
@@ -249,6 +264,7 @@ void __init setup_arch(char **cmdline_p)
 	process_uboot_commandline(&m68k_command_line[0], CL_SIZE);
 	*cmdline_p = m68k_command_line;
 	memcpy(boot_command_line, *cmdline_p, CL_SIZE);
+	boot_command_line[CL_SIZE-1] = 0;
 
 	parse_early_param();
 
@@ -325,6 +341,39 @@ void __init setup_arch(char **cmdline_p)
 		panic("No configuration setup");
 	}
 
+/* FIXME_Matthias: unsure if this works */
+#ifndef CONFIG_MMU
+	/*
+	 * Give all the memory to the bootmap allocator, tell it to put the
+	 * boot mem_map at the start of memory.
+	 */
+//	bootmap_size = init_bootmem_node(
+//		NODE_DATA(0),
+//		min_low_pfn,		/* map goes here */
+//		PFN_DOWN(PAGE_OFFSET),
+//		max_pfn);
+	/*
+	 * Free the usable memory, we have to make sure we do not free
+	 * the bootmem bitmap so we then reserve it after freeing it :-)
+	 */
+//	free_initmem();
+//	reserve_bootmem(memory_start, bootmap_size);
+
+	const unsigned long _rambase = PFN_DOWN(memory_start);
+	memblock_add(_rambase, memory_end - _rambase);
+	memblock_reserve(_rambase, memory_start - _rambase);
+	/* Keep a copy of command line */
+	*cmdline_p = &m68k_command_line[0];
+	memcpy(boot_command_line, m68k_command_line, COMMAND_LINE_SIZE);
+	boot_command_line[COMMAND_LINE_SIZE-1] = 0;
+	/*
+	 * Give all the memory to the bootmap allocator, tell it to put the
+	 * boot mem_map at the start of memory.
+	 */
+	min_low_pfn = PFN_DOWN(memory_start);
+	max_pfn = max_low_pfn = PFN_DOWN(memory_end);
+#endif
+
 	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && m68k_ramdisk.size)
 		memblock_reserve(m68k_ramdisk.addr, m68k_ramdisk.size);
 
@@ -382,6 +431,8 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 #define LOOP_CYCLES_68060	(1)
 #define LOOP_CYCLES_COLDFIRE	(2)
 
+/* FIXME_Matthias: these macros do not seem to work with CONFIG_M68000 */
+#ifndef CONFIG_M68000
 	if (CPU_IS_020) {
 		cpu = "68020";
 		clockfactor = LOOP_CYCLES_68020;
@@ -401,6 +452,10 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		cpu = "680x0";
 		clockfactor = 0;
 	}
+#else
+	cpu = "68000";
+	clockfactor = 16;
+#endif
 
 #ifdef CONFIG_M68KFPU_EMU_ONLY
 	fpu = "none(soft float)";
@@ -421,6 +476,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		fpu = "none";
 #endif
 
+#ifdef CONFIG_MMU
 	if (m68k_mmutype & MMU_68851)
 		mmu = "68851";
 	else if (m68k_mmutype & MMU_68030)
@@ -437,6 +493,9 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		mmu = "ColdFire";
 	else
 		mmu = "unknown";
+#else
+	mmu = "none";
+#endif
 
 	clockfreq = loops_per_jiffy * HZ * clockfactor;
 
@@ -503,6 +562,7 @@ static int __init proc_hardware_init(void)
 module_init(proc_hardware_init);
 #endif
 
+#ifdef CONFIG_ARCH_HAS_CPU_FINALIZE_INIT
 void __init arch_cpu_finalize_init(void)
 {
 #if defined(CONFIG_FPU) && !defined(CONFIG_M68KFPU_EMU)
@@ -515,6 +575,7 @@ void __init arch_cpu_finalize_init(void)
 	}
 #endif /* !CONFIG_M68KFPU_EMU */
 }
+#endif
 
 #ifdef CONFIG_ADB
 static int __init adb_probe_sync_enable (char *str) {

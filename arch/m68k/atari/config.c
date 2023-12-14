@@ -346,11 +346,13 @@ void __init config_atari(void)
 		pr_cont(" MICROWIRE");
 	}
 #endif
+#ifndef CONFIG_M68000
 	if (hwreg_present(&tt_rtc.regsel)) {
 		ATARIHW_SET(TT_CLK);
 		pr_cont(" TT_CLK");
 		mach_hwclk = atari_tt_hwclk;
 	}
+#endif
 	if (hwreg_present(&mste_rtc.sec_ones)) {
 		ATARIHW_SET(MSTE_CLK);
 		pr_cont(" MSTE_CLK");
@@ -367,6 +369,7 @@ void __init config_atari(void)
 	}
 	pr_cont("\n");
 
+#ifndef	CONFIG_M68000
 	if (CPU_IS_040_OR_060)
 		/* Now it seems to be safe to turn of the tt0 transparent
 		 * translation (the one that must not be turned off in
@@ -381,6 +384,7 @@ void __init config_atari(void)
 			: /* no outputs */
 			: /* no inputs */
 			: "d0");
+#endif
 
 	/* allocator for memory that must reside in st-ram */
 	atari_stram_init();
@@ -396,6 +400,7 @@ void __init config_atari(void)
 	 * design of the bus.
 	 */
 
+#ifndef	CONFIG_M68000
 	if (CPU_IS_020_OR_030) {
 		unsigned long tt1_val;
 		tt1_val = 0xfe008543;	/* Translate 0xfexxxxxx, enable, cache
@@ -418,6 +423,7 @@ void __init config_atari(void)
 						 * serialized, writable */
 
 	}
+#endif
 
 	/* Fetch tos version at Physical 2 */
 	/*
@@ -505,6 +511,7 @@ static void atari_reset(void)
 	 * instruction doesn't work.
 	 */
 	local_irq_disable();
+#ifndef CONFIG_M68000
 	asm volatile ("movec	%0,%%vbr"
 			: : "d" (0));
 
@@ -562,6 +569,7 @@ static void atari_reset(void)
 			"	jmp	%1@"
 			: /* no outputs */
 			: "m" (tc_val), "a" (reset_addr));
+#endif
 }
 
 

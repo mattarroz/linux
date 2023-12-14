@@ -198,6 +198,7 @@ int atari_mste_hwclk( int op, struct rtc_time *t )
     return 0;
 }
 
+#ifndef CONFIG_M68000
 int atari_tt_hwclk( int op, struct rtc_time *t )
 {
     int sec=0, min=0, hour=0, day=0, mon=0, year=0, wday=0;
@@ -316,6 +317,6 @@ int atari_tt_hwclk( int op, struct rtc_time *t )
         t->tm_year = year + atari_rtc_year_offset;
         t->tm_wday = wday - 1;
     }
-
     return( 0 );
 }
+#endif

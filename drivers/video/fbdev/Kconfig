@@ -257,8 +257,8 @@ config FB_ARC
 	  GPIO IO address to be used for setting control and data.
 
 config FB_ATARI
-	bool "Atari native chipset support"
-	depends on (FB = y) && ATARI
+	tristate "Atari native chipset support"
+	depends on FB && ATARI
 	select FB_CFB_FILLRECT
 	select FB_CFB_COPYAREA
 	select FB_CFB_IMAGEBLIT
