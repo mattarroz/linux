@@ -1,77 +1,26 @@
 /* -*- mode: asm -*-
-**
-** head.S -- This file contains the initial boot code for the
-**	     Linux/68k kernel.
-**
-** Copyright 1993 by Hamish Macdonald
-**
-** 68040 fixes by Michael Rausch
-** 68060 fixes by Roman Hodek
-** MMU cleanup by Randy Thelen
-** Final MMU cleanup by Roman Zippel
-**
-
-/*
- * Linux startup code.
  *
- * At this point, the boot loader has:
- * Disabled interrupts
- * Disabled caches
- * Put us in supervisor state.
- *
- * The kernel setup code takes the following steps:
- * .  Raise interrupt level
- * .  Set up initial kernel memory mapping.
- *    .  This sets up a mapping of the 4M of memory the kernel is located in.
- *    .  It also does a mapping of any initial machine specific areas.
- * .  Jump to kernel startup
- *
- * Much of the file restructuring was to accomplish:
- * 1) Remove register dependency through-out the file.
- * 2) Increase use of subroutines to perform functions
- * 3) Increase readability of the code
- *
- * Of course, readability is a subjective issue, so it will never be
- * argued that that goal was accomplished.  It was merely a goal.
- * A key way to help make code more readable is to give good
- * documentation.  So, the first thing you will find is exaustive
- * write-ups on the structure of the file, and the features of the
- * functional subroutines.
- *
+ * head-atarinommu.S -- This file contains the initial boot code for the
+ *	     		Linux/68k kernel.
  */
 
 #include <linux/linkage.h>
 #include <linux/init.h>
 #include <asm/bootinfo.h>
-#include <asm/bootinfo-amiga.h>
 #include <asm/bootinfo-atari.h>
-#include <asm/bootinfo-hp300.h>
-#include <asm/bootinfo-mac.h>
-#include <asm/bootinfo-q40.h>
-#include <asm/bootinfo-vme.h>
 #include <asm/setup.h>
 #include <asm/entry.h>
-#include <asm/page.h>
 #include <asm/asm-offsets.h>
 
 #define DEBUG
 
 .globl kernel_pg_dir
 .globl availmem
-.globl m68k_pgtable_cachemode
-.globl m68k_supervisor_cachemode
 .globl _ramstart
 
 /* Miscellaneous definitions */
 PAGESIZE	= 4096
 PAGESHIFT	= 12
-
-ROOT_TABLE_SIZE	= 128
-PTR_TABLE_SIZE	= 128
-PAGE_TABLE_SIZE	= 64
-ROOT_INDEX_SHIFT = 25
-PTR_INDEX_SHIFT  = 18
-PAGE_INDEX_SHIFT = 12
 
 #ifdef DEBUG
 /* When debugging use readable names for labels */
@@ -185,14 +134,7 @@ ENTRY(_stext)
 	bras	1f	/* Jump over bootinfo version numbers */
 
 	.long	BOOTINFOV_MAGIC
-	.long	MACH_AMIGA, AMIGA_BOOTI_VERSION
 	.long	MACH_ATARI, ATARI_BOOTI_VERSION
-	.long	MACH_MVME147, MVME147_BOOTI_VERSION
-	.long	MACH_MVME16x, MVME16x_BOOTI_VERSION
-	.long	MACH_BVME6000, BVME6000_BOOTI_VERSION
-	.long	MACH_MAC, MAC_BOOTI_VERSION
-	.long	MACH_Q40, Q40_BOOTI_VERSION
-	.long	MACH_HP300, HP300_BOOTI_VERSION
 	.long	0
 1:	jra	__start
 
@@ -262,12 +204,8 @@ ENTRY(__start)
         andw    #-PAGESIZE,%d0
 
         movel   %a0,_ramstart
-/* FIXME_Matthias: don't know what the next line is used for */
-//        movel   %d0,%a0@
         lea     L(kernel_end),%a0
-//        movel   %d0,%a0@
 	lea	_ramstart,%a0
-//	movel	%d0,%a0@
 
 /*
  * After this point no new memory is allocated and
@@ -330,8 +268,3 @@ __FINIT
 	
 availmem:
 	.long	0
-m68k_pgtable_cachemode:
-	.long	0
-m68k_supervisor_cachemode:
-	.long	0
-
