@@ -78,6 +78,8 @@ void __init m68k_setup_auto_interrupt(void (*handler)(unsigned int, struct pt_re
 {
 	if (handler)
 		*auto_irqhandler_fixup = (u32)handler;
+
+// FIXME: define flush_icache differnetly for 680000
 #ifndef CONFIG_M68000
 	flush_icache();
 #endif
