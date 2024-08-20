@@ -11,8 +11,9 @@
 # 68328, 68EZ328, 68VZ328
 
 ifndef CONFIG_ATARI
-  obj-y			+= entry.o ints.o timers.o m68328.o
+  obj-y			+= ints.o timers.o m68328.o
 endif
+obj-y += entry.o
 obj-$(CONFIG_ROM)	+= romvec.o
 
 obj-$(CONFIG_DRAGEN2)	+= dragen2.o
