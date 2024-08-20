@@ -72,7 +72,7 @@ int main(void)
 	DEFINE(LSIGTRAP, SIGTRAP);
 	DEFINE(LTRAP_TRACE, TRAP_TRACE);
 
-#if defined CONFIG_MMU || CONFIG_ATARI
+#if defined(CONFIG_MMU) || defined(CONFIG_ATARI)
 	/* offsets into the bi_record struct */
 	DEFINE(BIR_TAG, offsetof(struct bi_record, tag));
 	DEFINE(BIR_SIZE, offsetof(struct bi_record, size));
