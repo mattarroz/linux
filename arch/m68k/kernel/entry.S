@@ -201,7 +201,6 @@ auto_irqhandler_fixup = . + 2 // FIXME(mreis): +2 correct?
 .macro create_user_inthandler iter
 ENTRY(user_inthandler\iter)
 	SAVE_ALL_INT
-	GET_CURRENT(%d0) // FIXME(mreis): needed?
 .if \iter == 1
 	user_irqvec_fixup = . + 2 /* FIXME_Matthias: not sure if it is enough to have
 							   * this only at this point or if all other

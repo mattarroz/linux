@@ -257,7 +257,6 @@
 	"movel	"#tmp",%%a2\n\t" \
 	"movel	%%a2@,%%a2"
 #else
-/* FIXME_Matthias: don't know whether this is right */
 #define GET_CURRENT(tmp)
 #endif
 

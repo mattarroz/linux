@@ -219,7 +219,6 @@ inthandler:
 #ifdef CONFIG_ATARI // FIXME(mreis): find better define
 ENTRY(bad_inthandler)
 	SAVE_ALL_INT
-	GET_CURRENT(%d0)
 
 	movel	%sp,%sp@-
 	jsr	handle_badint
