@@ -41,12 +41,12 @@ asmlinkage void fpu_emu(void);
 
 #ifndef CONFIG_M68000
 e_vector vectors[256];
+#endif
 
 /* nmi handler for the Amiga */
 asm(".text\n"
     __ALIGN_STR "\n"
     "nmihandler: rte");
-#endif
 
 /*
  * this must be called very early as the kernel might
