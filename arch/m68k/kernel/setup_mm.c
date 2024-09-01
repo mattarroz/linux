@@ -425,15 +425,17 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 	const char *cpu, *mmu, *fpu;
 	unsigned long clockfreq, clockfactor;
 
+#define LOOP_CYCLES_68000	(16)
 #define LOOP_CYCLES_68020	(8)
 #define LOOP_CYCLES_68030	(8)
 #define LOOP_CYCLES_68040	(3)
 #define LOOP_CYCLES_68060	(1)
 #define LOOP_CYCLES_COLDFIRE	(2)
 
-/* FIXME_Matthias: these macros do not seem to work with CONFIG_M68000 */
-#ifndef CONFIG_M68000
-	if (CPU_IS_020) {
+	if (CPU_IS_000) {
+		cpu = "68000";
+		clockfactor = LOOP_CYCLES_68000;
+	} else if (CPU_IS_020) {
 		cpu = "68020";
 		clockfactor = LOOP_CYCLES_68020;
 	} else if (CPU_IS_030) {
@@ -452,10 +454,6 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		cpu = "680x0";
 		clockfactor = 0;
 	}
-#else
-	cpu = "68000";
-	clockfactor = 16;
-#endif
 
 #ifdef CONFIG_M68KFPU_EMU_ONLY
 	fpu = "none(soft float)";
@@ -476,7 +474,6 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		fpu = "none";
 #endif
 
-#ifdef CONFIG_MMU
 	if (m68k_mmutype & MMU_68851)
 		mmu = "68851";
 	else if (m68k_mmutype & MMU_68030)
@@ -491,11 +488,10 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 		mmu = "Apollo";
 	else if (m68k_mmutype & MMU_COLDFIRE)
 		mmu = "ColdFire";
+	else if (m68k_mmutype & MMU_NONE)
+		mmu = "none";
 	else
 		mmu = "unknown";
-#else
-	mmu = "none";
-#endif
 
 	clockfreq = loops_per_jiffy * HZ * clockfactor;
 
