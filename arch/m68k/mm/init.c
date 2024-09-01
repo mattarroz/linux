@@ -85,7 +85,7 @@ void free_initmem(void)
 #endif /* CONFIG_MMU_SUN3 */
 }
 
-#if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE) || defined(CONFIG_ATARI)
+#if (defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)) || defined(CONFIG_ATARI)
 #define VECTORS	&vectors[0]
 #else
 #define VECTORS	_ramvec
