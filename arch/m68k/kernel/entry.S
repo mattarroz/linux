@@ -45,8 +45,7 @@
 .globl auto_irqhandler_fixup
 .globl user_irqvec_fixup
 #ifdef CONFIG_M68000
-.globl auto_inthandler1, auto_inthandler2, auto_inthandler3, auto_inthandler4,\
-	 	auto_inthandler5, auto_inthandler6, auto_inthandler7
+.globl auto_inthandler1, auto_inthandler2
 #endif
 
 .text

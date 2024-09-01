@@ -78,11 +78,7 @@ void __init m68k_setup_auto_interrupt(void (*handler)(unsigned int, struct pt_re
 {
 	if (handler)
 		*auto_irqhandler_fixup = (u32)handler;
-
-// FIXME: define flush_icache differnetly for 680000
-#ifndef CONFIG_M68000
 	flush_icache();
-#endif
 }
 
 /**
@@ -103,9 +99,7 @@ void __init m68k_setup_user_interrupt(unsigned int vec, unsigned int cnt)
 	for (i = 0; i < cnt; i++)
 		irq_set_chip_and_handler(i, &user_irq_chip, handle_simple_irq);
 	*user_irqvec_fixup = vec - IRQ_USER;
-#ifndef CONFIG_M68000
 	flush_icache();
-#endif
 }
 
 /**
