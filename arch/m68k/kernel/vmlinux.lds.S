@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
+#if (defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)) || defined(CONFIG_ATARI)
 PHDRS
 {
   text PT_LOAD FILEHDR PHDRS FLAGS (7);

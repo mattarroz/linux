@@ -15,7 +15,6 @@ config AMIGA
 
 config ATARI
 	bool "Atari support"
-	depends on MMU
 	select MMU_MOTOROLA if MMU
 	select HAVE_ARCH_NVRAM_OPS
 	select LEGACY_TIMER_TICK
