@@ -20,6 +20,8 @@ obj-$(CONFIG_DRAGEN2)	+= dragen2.o
 obj-$(CONFIG_UCSIMM)	+= ucsimm.o
 obj-$(CONFIG_UCDIMM)	+= ucsimm.o
 
-ifndef CONFIG_M68KCLASSIC
+ifdef CONFIG_ATARI
+  obj-y         += head-atarinommu.o
+else
   obj-y			+= head.o
 endif

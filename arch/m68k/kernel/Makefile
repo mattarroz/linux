@@ -6,9 +6,6 @@
 extra-y			+= vmlinux.lds
 
 obj-$(CONFIG_MMU_MOTOROLA)	:= head.o
-ifndef CONFIG_MMU
-  obj-$(CONFIG_ATARI)       := head-atarinommu.o
-endif
 obj-$(CONFIG_SUN3)		    := sun3-head.o
 
 obj-y	+= entry.o irq.o module.o process.o ptrace.o
