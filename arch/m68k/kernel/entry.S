@@ -142,36 +142,8 @@ ENTRY(ret_from_kernel_thread)
 	addql	#4,%sp
 	jra	ret_from_exception
 
-#if defined(CONFIG_COLDFIRE) || !defined(CONFIG_MMU)
 
-#ifdef TRAP_DBG_INTERRUPT
-
-.globl dbginterrupt
-ENTRY(dbginterrupt)
-	SAVE_ALL_INT
-	GET_CURRENT(%d0)
-	movel	%sp,%sp@- 		/* stack frame pointer argument */
-	jsr	dbginterrupt_c
-	addql	#4,%sp
-	jra	ret_from_exception
-#endif
-
-ENTRY(reschedule)
-	/* save top of frame */
-	pea	%sp@
-	jbsr	set_esp0
-	addql	#4,%sp
-	pea	ret_from_exception
-	jmp	schedule
-
-ENTRY(ret_from_user_signal)
-	moveq #__NR_sigreturn,%d0
-	trap #0
-
-ENTRY(ret_from_user_rt_signal)
-	movel #__NR_rt_sigreturn,%d0
-	trap #0
-
+#ifdef CONFIG_M68000
 
 .altmacro
 .macro create_auto_inthandler iter
@@ -253,6 +225,38 @@ create_trap _vec_zerodiv, VEC_ZERODIV
 create_trap _vec_chk, VEC_CHK
 create_trap _vec_trap, VEC_TRAP
 create_trap _vec_trace, VEC_TRACE
+
+#endif /* CONFIG_M68000 */
+
+#if defined(CONFIG_COLDFIRE) || !defined(CONFIG_MMU)
+
+#ifdef TRAP_DBG_INTERRUPT
+
+.globl dbginterrupt
+ENTRY(dbginterrupt)
+	SAVE_ALL_INT
+	GET_CURRENT(%d0)
+	movel	%sp,%sp@- 		/* stack frame pointer argument */
+	jsr	dbginterrupt_c
+	addql	#4,%sp
+	jra	ret_from_exception
+#endif
+
+ENTRY(reschedule)
+	/* save top of frame */
+	pea	%sp@
+	jbsr	set_esp0
+	addql	#4,%sp
+	pea	ret_from_exception
+	jmp	schedule
+
+ENTRY(ret_from_user_signal)
+	moveq #__NR_sigreturn,%d0
+	trap #0
+
+ENTRY(ret_from_user_rt_signal)
+	movel #__NR_rt_sigreturn,%d0
+	trap #0
 
 #else
 
