@@ -44,9 +44,6 @@
 .globl bad_interrupt
 .globl auto_irqhandler_fixup
 .globl user_irqvec_fixup
-#ifdef CONFIG_M68000
-.globl auto_inthandler1, auto_inthandler2
-#endif
 
 .text
 ENTRY(__sys_fork)
