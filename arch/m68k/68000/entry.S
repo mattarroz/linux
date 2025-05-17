@@ -216,19 +216,11 @@ inthandler:
 /*
  * Handler for uninitialized and spurious interrupts.
  */
-#ifdef CONFIG_M68KCLASSIC
-ENTRY(bad_inthandler)
-	SAVE_ALL_INT
 
-	movel	%sp,%sp@-
-	jsr	handle_badint
-	addql	#4,%sp
-	jra	ret_from_exception
-#else
 ENTRY(bad_interrupt)
 	addql	#1,irq_err_count
 	rte
-#endif
+
 /*
  * Beware - when entering resume, prev (the current task) is
  * in a0, next (the new task) is in a1, so don't change these
