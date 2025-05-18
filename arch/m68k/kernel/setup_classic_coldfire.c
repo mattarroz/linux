@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- *  linux/arch/m68k/kernel/setup-classic.c
+ *  linux/arch/m68k/kernel/setup_classic_coldfire.c
  *
  *  Copyright (C) 1995  Hamish Macdonald
  */

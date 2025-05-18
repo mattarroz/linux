@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
-#ifdef CONFIG_UCLINUX // FIXME(mreis): We cannot use CONFIG_M68KCLASSIC because coldfire is also contained in setup_classic. so classic is not strictly true
-#include "setup_uclinux.c"
+#if defined(CONFIG_M68KCLASSIC) || (defined(COLDFIRE) && defined(CONFIG_MMU))
+#include "setup_classic_coldfire.c"
 #else
-#include "setup_classic.c"
+#include "setup_uclinux.c"
 #endif
 
 #if IS_ENABLED(CONFIG_INPUT_M68K_BEEP)
