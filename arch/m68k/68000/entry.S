@@ -22,7 +22,6 @@
 .globl resume
 .globl ret_from_exception
 .globl sys_call_table
-#ifndef CONFIG_M68KCLASSIC
 .globl bad_interrupt
 .globl inthandler1
 .globl inthandler2
@@ -31,7 +30,6 @@
 .globl inthandler5
 .globl inthandler6
 .globl inthandler7
-#endif
 
 badsys:
 	movel	#-ENOSYS,%sp@(PT_OFF_D0)
@@ -121,7 +119,6 @@ Lsignal_return:
 	addql	#4,%sp
 	jra	1b
 
-#ifndef CONFIG_M68KCLASSIC
 /*
  * This is the main interrupt handler, responsible for calling process_int()
  */
@@ -212,11 +209,10 @@ inthandler:
 	jbsr	process_int		/*  process the IRQ*/
 3:     	addql	#8,%sp			/*  pop parameters off stack*/
 	bra	ret_from_exception
-#endif
+
 /*
  * Handler for uninitialized and spurious interrupts.
  */
-
 ENTRY(bad_interrupt)
 	addql	#1,irq_err_count
 	rte

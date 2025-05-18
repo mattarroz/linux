@@ -21,7 +21,6 @@ extern e_vector *_ramvec;
 
 #ifdef CONFIG_M68000
 #define vectors		((e_vector *)0)
-/* assembler routines */
 asmlinkage void system_call(void);
 asmlinkage void buserr(void);
 asmlinkage void auto_inthandler1(void);
