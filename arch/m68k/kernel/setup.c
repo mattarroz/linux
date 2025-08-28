@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
-#ifdef CONFIG_MMU
-#include "setup_mm.c"
+#if defined(CONFIG_M68KCLASSIC) || (defined(COLDFIRE) && defined(CONFIG_MMU))
+#include "setup_classic_coldfire.c"
 #else
-#include "setup_no.c"
+#include "setup_uclinux.c"
 #endif
 
 #if IS_ENABLED(CONFIG_INPUT_M68K_BEEP)

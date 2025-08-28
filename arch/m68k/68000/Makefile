@@ -10,11 +10,15 @@
 
 # 68328, 68EZ328, 68VZ328
 
-obj-y			+= entry.o ints.o timers.o m68328.o
+ifdef CONFIG_ATARI
+  obj-y         += entry-atarinommu.o head-atarinommu.o
+else
+  obj-y			+= entry.o head.o ints.o timers.o m68328.o
+endif
+
 obj-$(CONFIG_ROM)	+= romvec.o
 
 obj-$(CONFIG_DRAGEN2)	+= dragen2.o
 obj-$(CONFIG_UCSIMM)	+= ucsimm.o
 obj-$(CONFIG_UCDIMM)	+= ucsimm.o
 
-obj-y			+= head.o

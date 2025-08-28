@@ -14,12 +14,12 @@ config AMIGA
 
 config ATARI
 	bool "Atari support"
-	depends on MMU
+	select MMU_MOTOROLA if MMU
 	select HAVE_ARCH_NVRAM_OPS
 	select LEGACY_TIMER_TICK
 	help
 	  This option enables support for the 68000-based Atari series of
-	  computers (including the TT, Falcon and Medusa). If you plan to use
+	  computers (including the ST, TT, Falcon and Medusa). If you plan to use
 	  this kernel on an Atari, say Y here and browse the material
 	  available in <file:Documentation/arch/m68k>; otherwise say N.
 

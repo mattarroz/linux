@@ -3,7 +3,7 @@ comment "Processor Type"
 
 choice
 	prompt "CPU/machine family support"
-	default M68KCLASSIC if MMU
+	default M68KCLASSIC
 	default COLDFIRE if !MMU
 	help
 	  The Freescale (was Motorola) M68K family of processors implements
